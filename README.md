@@ -6,7 +6,7 @@ Proyecto final de Machine Learning aplicado a la identificación de ambientes de
 
 La Rosaura es un establecimiento agropecuario cuya actividad productiva incluye la producción lechera. Parte de la superficie agrícola se destina a maíz para silo, utilizado como componente de la alimentación del rodeo.
 
-La producción agrícola presenta variabilidad espacial dentro de los potreros. Diferencias de relieve, suelo, disponibilidad hídrica, desarrollo del cultivo y manejo pueden generar sectores con distinto comportamiento agronómico y potencial productivo. Sin embargo, una aplicación uniforme de fertilizante no representa necesariamente esa heterogeneidad.
+La producción agrícola presenta variabilidad espacial dentro de los potreros. Diferencias de relieve, suelo, disponibilidad hídrica, desarrollo del cultivo y manejo pueden generar sectores con distinto comportamiento agronómico y potencial productivo. Una aplicación uniforme de fertilizante no representa necesariamente esa heterogeneidad.
 
 Este proyecto busca construir una metodología cuantitativa, reproducible y espacialmente explícita que permita caracterizar esa variabilidad y generar ambientes de manejo como soporte para futuras decisiones de fertilización diferencial.
 
@@ -37,7 +37,7 @@ Desarrollar una metodología reproducible basada en Machine Learning que permita
 ## 6. Objetivos específicos
 
 1. Construir una base de datos espacial y multitemporal de los potreros de maíz.
-2. Procesar variables provenientes de imágenes SAR SAOCOM.
+2. Procesar variables provenientes de imágenes SAR SAOCOM reales.
 3. Incorporar variables topográficas y, cuando estén disponibles, edáficas y de manejo.
 4. Realizar un análisis exploratorio de datos (EDA) que caracterice calidad, distribución y variabilidad espacial y temporal.
 5. Aplicar técnicas no supervisadas para identificar ambientes de comportamiento homogéneo.
@@ -47,9 +47,30 @@ Desarrollar una metodología reproducible basada en Machine Learning que permita
 9. Aplicar herramientas de explicabilidad, incluyendo SHAP cuando corresponda.
 10. Generar mapas de ambientes que puedan utilizarse como insumo para decisiones agronómicas posteriores.
 
-## 7. Estrategia de Machine Learning
+## 7. Producto SAOCOM real validado
 
-El proyecto contempla dos etapas, condicionadas por la disponibilidad de datos reales.
+El primer producto disponible para el proyecto es:
+
+- Product ID: `EOL1DSARSAO1A14948810`
+- Fecha de adquisición: **07/09/2024**
+- Nivel: **L1D**
+- Modo: **TOPSAR / TNB**
+- Polarización: **QP — HH, HV, VH y VV**
+- Formato raster: **GeoTIFF FLOAT32**, entregado sin extensión `.tif`
+- CRS: **EPSG:32721 — WGS84 / UTM 21S**
+- Dimensiones: **4.396 × 7.104 píxeles** por polarización
+- Resolución observada: aproximadamente **43,55 × 42,33 m**
+- Metadato radiométrico: `Sigma0Type = AMPLITUDE`
+
+Para valores positivos y válidos se utiliza:
+
+```text
+σ⁰_dB = 20 · log10(amplitud)
+```
+
+Esta transformación surge del metadato real del producto. No se utilizará la resolución previa supuesta de 10 m para este producto.
+
+## 8. Estrategia de Machine Learning
 
 ### Etapa A — Aprendizaje no supervisado
 
@@ -74,68 +95,114 @@ Si se incorpora una variable objetivo confiable —por ejemplo rendimiento, prod
 
 La selección final dependerá de los datos y no se fijará de antemano.
 
-## 8. Unidad de análisis
+## 9. Unidad de análisis
 
 La unidad de análisis prevista es una **celda espacial dentro de un potrero**, potencialmente observada en múltiples fechas. Esto permite integrar series temporales SAR con variables relativamente estables como topografía y suelo.
 
-La existencia de miles de píxeles no implica miles de observaciones independientes. La autocorrelación espacial será considerada explícitamente durante la validación.
+La existencia de muchos píxeles no implica muchas observaciones independientes. La autocorrelación espacial será considerada explícitamente durante la validación.
 
-## 9. Fuentes de variables previstas
+## 10. Variables candidatas
 
 ### SAR SAOCOM
 
-El producto piloto solicitado es de polarización cuádruple (QP), con HH, HV, VH y VV. Las transformaciones radiométricas y variables derivadas se definirán únicamente después de inspeccionar los metadatos reales del producto.
+- `sigma0_hh_db`
+- `sigma0_hv_db`
+- `sigma0_vh_db`
+- `sigma0_vv_db`
+- diferencias y razones entre polarizaciones cuando estén justificadas;
+- estadísticos temporales por píxel o potrero;
+- índices polarimétricos compatibles con la representación radiométrica disponible.
 
 No se asumirán relaciones directas del tipo HH = humedad, HV = biomasa o radar = dosis de fertilizante.
 
 ### Topografía
 
-Se prevé incorporar, según disponibilidad y resolución del modelo digital de elevación:
+Se prevé incorporar:
 
 - elevación;
 - pendiente;
 - orientación;
 - posición topográfica relativa;
-- otras variables derivadas que tengan justificación agronómica.
+- otras variables derivadas de un DEM con justificación agronómica.
 
 ### Suelo y manejo
 
-Cuando estén disponibles se podrán incorporar análisis de suelo, fechas de siembra, híbrido, densidad, fertilización y otras variables de manejo.
+Cuando estén disponibles:
+
+- análisis de suelo;
+- fecha de siembra;
+- híbrido;
+- densidad;
+- fertilización aplicada;
+- precipitaciones/clima;
+- observaciones del cultivo;
+- rendimiento o producción final de silo.
 
 ### Variable objetivo
 
-La variable objetivo supervisada **todavía no está definida**. No se utilizarán valores simulados para reemplazar mediciones de campo. Su definición dependerá de la disponibilidad y calidad de datos productivos reales.
+La variable objetivo supervisada **todavía no está definida**. No se utilizarán valores simulados para reemplazar mediciones de campo.
 
-## 10. Validación
+## 11. Validación
 
 Debido a la dependencia espacial entre observaciones cercanas, no se utilizará un `train_test_split` aleatorio como única evidencia de generalización.
 
-Se priorizarán esquemas de validación por grupos, potreros o bloques espaciales. Para modelos supervisados se evaluará, entre otras alternativas, `GroupKFold` utilizando el identificador del potrero como grupo. Si la información disponible lo permite, también se analizará generalización temporal entre campañas.
+Se priorizarán esquemas de validación por grupos, potreros o bloques espaciales. Para modelos supervisados se evaluará `GroupKFold` utilizando el identificador del potrero como grupo cuando el diseño de los datos lo permita. También se analizará generalización temporal entre campañas.
 
-## 11. Métricas
+## 12. Métricas
 
-Las métricas se definirán según la tarea final. Para regresión se consideran MAE, RMSE y R². Para clasificación se seleccionarán métricas acordes al balance de clases y al costo agronómico de los errores. Para clustering se utilizarán métricas internas junto con estabilidad espacial/temporal e interpretación agronómica.
+- Regresión: MAE, RMSE y R².
+- Clasificación: métricas acordes al balance de clases y costo agronómico de los errores.
+- Clustering: métricas internas, estabilidad espacial/temporal y validación agronómica.
 
-La selección del modelo no dependerá exclusivamente de una métrica: también se considerarán generalización, interpretabilidad y utilidad para la decisión productiva.
+La selección del modelo no dependerá exclusivamente de una métrica.
 
-## 12. Explicabilidad
+## 13. Explicabilidad
 
-Cuando el tipo de modelo lo permita, se utilizará SHAP para estudiar la contribución de las variables a las predicciones. La interpretación se realizará como explicación del comportamiento del modelo y no automáticamente como evidencia de causalidad agronómica.
+Cuando el tipo de modelo lo permita, se utilizará SHAP para estudiar la contribución de las variables a las predicciones. Los valores SHAP describirán el comportamiento del modelo, no causalidad agronómica.
 
-## 13. Reproducibilidad
+## 14. Reproducibilidad
 
-El proyecto se desarrollará en Python. El notebook final documentará el pipeline completo desde la carga de datos hasta la evaluación y las conclusiones. Se fijarán semillas aleatorias cuando corresponda y se documentarán dependencias, transformaciones y decisiones metodológicas.
+El proyecto se desarrollará en Python. Se utilizarán semillas aleatorias cuando corresponda, rutas relativas, separación entre datos originales/procesados/outputs y documentación explícita de transformaciones.
 
-## 14. Relación con el proyecto SAOCOM
+Los productos SAOCOM originales y otros archivos geoespaciales pesados no se versionarán directamente en Git.
 
-Este repositorio contiene el análisis de Machine Learning. La adquisición y el procesamiento geoespacial primario de productos SAOCOM se mantienen separados del proyecto académico. Los datos que ingresen a este repositorio deberán estar documentados y ser reproducibles a partir de sus fuentes originales.
+## 15. Relación con el proyecto SAOCOM
 
-## 15. Estado actual
+Este repositorio contiene el análisis de Machine Learning. La adquisición y el procesamiento geoespacial primario de SAOCOM se mantienen en el repositorio `proyecto-saocom`.
 
-**Fase 1 — Diseño metodológico.**
+El flujo previsto es:
 
-Ya se definieron el problema productivo, la pregunta de investigación, las hipótesis, los objetivos y la estrategia general de validación. Permanecen pendientes la incorporación de límites individuales de los potreros, topografía, imágenes SAOCOM reales y datos agronómicos de campo.
+```text
+proyecto-saocom
+   ↓
+GeoTIFF recortados + variables SAR documentadas
+   ↓
+ml_fertilizacion_la_rosaura
+   ↓
+EDA → features → clustering / modelos supervisados
+   ↓
+ambientes de manejo validados
+```
+
+## 16. Estado actual
+
+**Fase 2 — datos satelitales reales disponibles.**
+
+- [x] Problema, hipótesis y objetivos definidos.
+- [x] Primer producto SAOCOM L1D real descargado e inspeccionado.
+- [x] Polarizaciones HH/HV/VH/VV confirmadas.
+- [x] CRS y resolución real confirmados.
+- [x] `Sigma0Type=AMPLITUDE` confirmado.
+- [x] Conversión radiométrica a dB definida.
+- [ ] Incorporar límites individuales de los 16 potreros.
+- [ ] Identificar potreros de maíz por campaña.
+- [ ] Procesar serie temporal 2024/25.
+- [ ] Incorporar DEM/topografía.
+- [ ] Incorporar variables de suelo y manejo.
+- [ ] Construir dataset analítico de ML.
+- [ ] Ejecutar EDA y clustering.
+- [ ] Entrenar modelos supervisados si aparece un target confiable.
 
 ---
 
-Este repositorio se encuentra en desarrollo. Las conclusiones agronómicas y los resultados de Machine Learning se incorporarán únicamente cuando existan datos observados suficientes para respaldarlos.
+Las conclusiones agronómicas y los resultados de Machine Learning se incorporarán únicamente cuando existan datos observados suficientes para respaldarlos.
