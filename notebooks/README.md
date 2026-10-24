@@ -1,28 +1,39 @@
 # Notebook final
 
-El notebook principal se incorporará progresivamente y deberá poder ejecutarse de principio a fin.
+El notebook principal se incorporará progresivamente y deberá poder ejecutarse de principio a fin con datos observados.
 
-Estructura prevista:
+## Estructura actualizada
 
 1. Resumen ejecutivo
 2. Contexto productivo de La Rosaura
 3. Formulación del problema
 4. Pregunta de investigación e hipótesis
-5. Fuentes de datos
-6. Carga y control de calidad
-7. EDA
-8. Ingeniería de atributos
-9. Estrategia de validación espacial
-10. Aprendizaje no supervisado
-11. Definición del target supervisado, si existe
-12. Baseline
-13. Entrenamiento de modelos
-14. Optimización de hiperparámetros
-15. Comparación y selección
-16. Explicabilidad con SHAP
-17. Mapas y análisis agronómico
-18. Limitaciones
-19. Conclusiones
-20. Reproducibilidad
+5. Producto SAOCOM real y trazabilidad
+6. Carga de datos procesados
+7. Control de calidad espacial/radiométrico
+8. EDA
+9. Ingeniería de atributos SAR
+10. Integración de topografía y manejo
+11. Estrategia de validación espacial
+12. Aprendizaje no supervisado
+13. Evaluación de estabilidad de clusters
+14. Definición del target supervisado, si existe
+15. Baseline
+16. Entrenamiento de modelos
+17. Optimización de hiperparámetros
+18. Comparación y selección
+19. Explicabilidad con SHAP
+20. Mapas de ambientes y análisis agronómico
+21. Limitaciones
+22. Conclusiones
+23. Reproducibilidad
 
-Las secciones dependientes de datos permanecerán explícitamente pendientes hasta disponer de observaciones reales. No se generarán datos simulados para completar resultados del trabajo final.
+## Producto real ya disponible
+
+El primer producto de referencia es `EOL1DSARSAO1A14948810` (07/09/2024), con HH/HV/VH/VV, EPSG:32721, resolución aproximada de 43,55 × 42,33 m y `Sigma0Type=AMPLITUDE`.
+
+Para valores positivos se utilizará `σ⁰_dB = 20·log10(amplitud)` en los datos derivados por el pipeline geoespacial.
+
+## Regla metodológica
+
+No se generarán datos simulados para completar resultados. Las secciones de ML se habilitarán a medida que existan datasets observados y documentados. Los píxeles vecinos no se tratarán como observaciones independientes durante la validación.
