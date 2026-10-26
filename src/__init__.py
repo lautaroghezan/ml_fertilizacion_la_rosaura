@@ -1,7 +1,2 @@
-"""Utilidades reproducibles para el proyecto ML de La Rosaura.
-
-El paquete separa preprocesamiento, features, modelos y evaluación para evitar
-acoplar el análisis académico al procesamiento geoespacial primario de SAOCOM.
-"""
-
-__version__ = "0.2.0"
+"""ML multisensor para reconstrucción histórica y ambientes de manejo en La Rosaura."""
+__version__="0.3.0"
