@@ -1,32 +1,15 @@
-# Datos raw
+# data/raw
 
-Esta carpeta está reservada para datos originales o referencias reproducibles a sus fuentes.
+Datos originales pesados; no versionarlos en Git.
 
-No deben modificarse manualmente los archivos originales. Los productos SAOCOM de gran tamaño no se versionarán directamente en GitHub. Cada fuente incorporada deberá registrar como mínimo: origen, identificador, fecha de adquisición/medición, sistema de referencia espacial cuando corresponda y pasos necesarios para reproducir su obtención.
+Fuentes previstas:
+- SAOCOM L1D originales y metadatos;
+- Sentinel-2 originales/consultas de reflectancia e índices con información de calidad/nubes;
+- DEM;
+- análisis de suelo, manejo, clima y producción cuando existan.
 
-## Producto SAOCOM de referencia
+Las geometrías pequeñas y estables de los 16 potreros sí se versionan por separado en `data/reference/potreros_la_rosaura.geojson` (`L01`–`L16`).
 
-Primer producto real validado:
+Producto SAOCOM piloto validado: `EOL1DSARSAO1A14948810`, 07/09/2024, QP HH/HV/VH/VV, EPSG:32721, ~43,55×42,33 m, `Sigma0Type=AMPLITUDE`.
 
-- Product ID: `EOL1DSARSAO1A14948810`
-- Fecha de adquisición: `2024-09-07`
-- Nivel: `L1D`
-- Modo: `TOPSAR / TNB`
-- Polarizaciones: `HH`, `HV`, `VH`, `VV`
-- CRS: `EPSG:32721`
-- Resolución aproximada: `43.55 x 42.33 m`
-- Tipo de dato: `FLOAT32`
-- Metadato: `Sigma0Type=AMPLITUDE`
-- Conversión a dB para valores positivos: `20 * log10(amplitud)`
-
-El ZIP original y sus GeoTIFF no deben agregarse al repositorio. La trazabilidad se mantiene mediante Product ID, metadatos y documentación del pipeline de procesamiento.
-
-## Fuentes previstas
-
-- límites de los 16 potreros de La Rosaura;
-- identificación de potreros de maíz por campaña;
-- variables topográficas / DEM;
-- productos SAR SAOCOM;
-- análisis de suelo;
-- datos de manejo;
-- variables productivas medidas en campo.
+La historia maíz/pastura NO es un dato raw disponible: será una variable inferida por el Modelo 1 y deberá almacenarse con confianza y versión del modelo.
