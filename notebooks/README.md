@@ -1,39 +1,32 @@
-# Notebook final
+# Notebook principal — orden recomendado
 
-El notebook principal se incorporará progresivamente y deberá poder ejecutarse de principio a fin con datos observados.
+1. Objetivo y guardrails científicos.
+2. Carga/validación de `L01`–`L16`.
+3. Mapa de los 16 potreros y control contra AOI.
+4. Inventario SAOCOM y trazabilidad de productos.
+5. QC radiométrico SAOCOM.
+6. Resumen HH/HV/VH/VV por potrero-fecha.
+7. Inventario Sentinel-2 y QC de nubes/calidad.
+8. Series ópticas e índices por potrero-fecha.
+9. Visualización comparada SAOCOM–Sentinel-2.
+10. Definición de campaña agrícola.
+11. Features fenológicas temporales.
+12. EDA maíz/pastura cuando existan referencias.
+13. Baseline transparente de clasificación histórica.
+14. Modelo de cultivo si las etiquetas lo permiten.
+15. Matriz `potrero × campaña` con clase y confianza.
+16. Revisión explícita de casos `incierto`.
+17. Features de rotación histórica.
+18. Incorporación de DEM/topografía.
+19. Incorporación de suelo/manejo.
+20. Selección de potreros/campañas de maíz.
+21. Dataset espacial para ambientes.
+22. PCA exploratorio si aporta valor.
+23. K-Means baseline y comparación opcional.
+24. Estabilidad espacial/temporal de clusters.
+25. Validación por potrero/bloque/campaña.
+26. Modelo supervisado sólo con target observado.
+27. SHAP/interpretabilidad cuando corresponda.
+28. Mapas finales y limitaciones.
 
-## Estructura actualizada
-
-1. Resumen ejecutivo
-2. Contexto productivo de La Rosaura
-3. Formulación del problema
-4. Pregunta de investigación e hipótesis
-5. Producto SAOCOM real y trazabilidad
-6. Carga de datos procesados
-7. Control de calidad espacial/radiométrico
-8. EDA
-9. Ingeniería de atributos SAR
-10. Integración de topografía y manejo
-11. Estrategia de validación espacial
-12. Aprendizaje no supervisado
-13. Evaluación de estabilidad de clusters
-14. Definición del target supervisado, si existe
-15. Baseline
-16. Entrenamiento de modelos
-17. Optimización de hiperparámetros
-18. Comparación y selección
-19. Explicabilidad con SHAP
-20. Mapas de ambientes y análisis agronómico
-21. Limitaciones
-22. Conclusiones
-23. Reproducibilidad
-
-## Producto real ya disponible
-
-El primer producto de referencia es `EOL1DSARSAO1A14948810` (07/09/2024), con HH/HV/VH/VV, EPSG:32721, resolución aproximada de 43,55 × 42,33 m y `Sigma0Type=AMPLITUDE`.
-
-Para valores positivos se utilizará `σ⁰_dB = 20·log10(amplitud)` en los datos derivados por el pipeline geoespacial.
-
-## Regla metodológica
-
-No se generarán datos simulados para completar resultados. Las secciones de ML se habilitarán a medida que existan datasets observados y documentados. Los píxeles vecinos no se tratarán como observaciones independientes durante la validación.
+No usar datos simulados para completar resultados. No inferir maíz por un único umbral de biomasa/NDVI ni etiquetar clusters como potencial productivo sin validación.
