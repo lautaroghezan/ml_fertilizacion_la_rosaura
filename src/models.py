@@ -1,37 +1,14 @@
-"""Modelos de Machine Learning para La Rosaura.
-
-Incluye sólo constructores reproducibles. La selección final de modelos e
-hiperparámetros se realizará después del EDA y según disponibilidad de target.
-"""
-
-from __future__ import annotations
-
+"""Modelos baseline. Ningún modelo sustituye validación agronómica."""
 from sklearn.cluster import KMeans
-from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
-from sklearn.linear_model import Ridge
+from sklearn.ensemble import GradientBoostingRegressor,RandomForestClassifier,RandomForestRegressor
+from sklearn.linear_model import LogisticRegression,Ridge
+RANDOM_STATE=42
 
-RANDOM_STATE = 42
+def make_kmeans(n_clusters:int=3):return KMeans(n_clusters=n_clusters,n_init=10,random_state=RANDOM_STATE)
 
+def make_crop_classification_baselines():
+    """Usar sólo cuando existan etiquetas históricas de referencia suficientes."""
+    return {"logistic":LogisticRegression(max_iter=2000,class_weight="balanced",random_state=RANDOM_STATE),"random_forest":RandomForestClassifier(n_estimators=300,class_weight="balanced",n_jobs=-1,random_state=RANDOM_STATE)}
 
-def make_kmeans(n_clusters: int = 3) -> KMeans:
-    """Baseline no supervisado para ambientes de manejo."""
-    return KMeans(
-        n_clusters=n_clusters,
-        random_state=RANDOM_STATE,
-        n_init="auto",
-    )
-
-
-def make_regression_baselines() -> dict:
-    """Modelos supervisados candidatos si existe target agronómico real."""
-    return {
-        "ridge": Ridge(alpha=1.0),
-        "random_forest": RandomForestRegressor(
-            n_estimators=300,
-            random_state=RANDOM_STATE,
-            n_jobs=-1,
-        ),
-        "gradient_boosting": GradientBoostingRegressor(
-            random_state=RANDOM_STATE,
-        ),
-    }
+def make_regression_baselines():
+    return {"ridge":Ridge(alpha=1.0),"random_forest":RandomForestRegressor(n_estimators=300,n_jobs=-1,random_state=RANDOM_STATE),"gradient_boosting":GradientBoostingRegressor(random_state=RANDOM_STATE)}
