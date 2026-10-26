@@ -1,39 +1,15 @@
-"""Evaluación de modelos y clusters para La Rosaura."""
-
-from __future__ import annotations
-
+"""Evaluación espacial/temporal para los dos modelos del proyecto."""
 import numpy as np
-from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score, silhouette_score
+from sklearn.metrics import accuracy_score,balanced_accuracy_score,classification_report,mean_absolute_error,mean_squared_error,r2_score,silhouette_score
 from sklearn.model_selection import GroupKFold
 
+def clustering_metrics(X,labels):
+    u=np.unique(labels);return {"n_clusters":int(len(u)),"silhouette":float(silhouette_score(X,labels)) if 1<len(u)<len(labels) else None}
 
-def clustering_metrics(X, labels) -> dict:
-    """Calcula métricas internas básicas para clustering.
+def crop_classification_metrics(y_true,y_pred):
+    return {"accuracy":float(accuracy_score(y_true,y_pred)),"balanced_accuracy":float(balanced_accuracy_score(y_true,y_pred)),"report":classification_report(y_true,y_pred,output_dict=True,zero_division=0)}
 
-    Silhouette no reemplaza la evaluación de estabilidad espacial/temporal ni la
-    validación agronómica.
-    """
-    unique = np.unique(labels)
-    if len(unique) < 2 or len(unique) >= len(labels):
-        silhouette = None
-    else:
-        silhouette = float(silhouette_score(X, labels))
-    return {
-        "n_clusters": int(len(unique)),
-        "silhouette": silhouette,
-    }
+def regression_metrics(y_true,y_pred):
+    return {"mae":float(mean_absolute_error(y_true,y_pred)),"rmse":float(mean_squared_error(y_true,y_pred)**0.5),"r2":float(r2_score(y_true,y_pred))}
 
-
-def regression_metrics(y_true, y_pred) -> dict:
-    """Métricas estándar para un futuro target continuo observado."""
-    rmse = mean_squared_error(y_true, y_pred) ** 0.5
-    return {
-        "mae": float(mean_absolute_error(y_true, y_pred)),
-        "rmse": float(rmse),
-        "r2": float(r2_score(y_true, y_pred)),
-    }
-
-
-def make_group_kfold(n_splits: int = 5) -> GroupKFold:
-    """Validador por grupos, por ejemplo potrero_id."""
-    return GroupKFold(n_splits=n_splits)
+def make_group_kfold(n_splits:int=5):return GroupKFold(n_splits=n_splits)
